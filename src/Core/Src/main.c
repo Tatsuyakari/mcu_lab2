@@ -146,8 +146,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  set_timer1(50);
-  set_timer2(100);
+  int timer1_value = 50;
+  int timer2_value = 100;
+  set_timer1(timer1_value);
+  set_timer2(timer2_value);
 
   int SEGMENT = 0;
   // set pin EN0 to 1 and EN3 to 1
@@ -166,7 +168,7 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN3_Pin, 1);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN0_Pin, 0);
       update7SEG(0);
-      set_timer1(50);
+      set_timer1(timer1_value);
     }
     else if (timer1_flag == 1 && SEGMENT == 1)
     {
@@ -174,7 +176,7 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 0);
       update7SEG(1);
-      set_timer1(50);
+      set_timer1(timer1_value);
     }
     else if (timer1_flag == 1 && SEGMENT == 2)
     {
@@ -182,7 +184,7 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN1_Pin, 1);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN2_Pin, 0);
       update7SEG(2);
-      set_timer1(50);
+      set_timer1(timer1_value);
     }
     else if (timer1_flag == 1 && SEGMENT == 3)
     {
@@ -190,13 +192,13 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN2_Pin, 1);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN3_Pin, 0);
       update7SEG(3);
-      set_timer1(50);
+      set_timer1(timer1_value);
     }
     if (timer2_flag == 1)
     {
       // togle Dot
       HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-      set_timer2(100);
+      set_timer2(timer2_value);
     }
 
     /* USER CODE BEGIN 3 */
