@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "sofware_timer.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -110,9 +111,9 @@ void update7SEG(int index)
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -147,8 +148,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   int timer1_value = 50;
   int timer2_value = 100;
+  int timer3_value = 50;
   set_timer1(timer1_value);
   set_timer2(timer2_value);
+  set_timer3(timer3_value);
   // set pin EN0 to 1 and EN3 to 1
   HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
   HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
@@ -213,28 +216,52 @@ int main(void)
     switch (index)
     {
     case 0:
-      // Code for index 0
+      HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM1_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 1:
-      // Code for index 1
+      HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 2:
-      // Code for index 2
+      HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 3:
-      // Code for index 3
+      HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM2_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 4:
-      // Code for index 4
+      HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM2_Pin | ENM3_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 5:
-      // Code for index 5
+      HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM6_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 6:
-      // Code for index 6
+      HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM7_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     case 7:
-      // Code for index 7
+      HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, RESET);
+      HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin, SET);
+      HAL_GPIO_WritePin(GPIOB, 0xff << 8, SET);
+      HAL_GPIO_WritePin(GPIOB, matrix_buffer[index] << 8, RESET);
       break;
     default:
       break;
@@ -244,6 +271,49 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    // display 1 on 7-segment en0 then after 500s display 2 on 7-segment en1
+    second++;
+    if (second >= 60)
+    {
+      second = 0;
+      minute++;
+    }
+    if (minute >= 60)
+    {
+      minute = 0;
+      hour++;
+    }
+    if (hour >= 24)
+    {
+      hour = 0;
+    }
+    updateClockBuffer();
+    HAL_Delay(1000);
+    if (timer2_flag == 1)
+    {
+      // togle Dot
+      HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+      set_timer2(timer2_value);
+    }
+    if (timer3_flag == 1)
+    {
+      // Write letter A to LED Matrix
+      matrix_buffer[0] = 0x3C;
+      matrix_buffer[1] = 0x42;
+      matrix_buffer[2] = 0x81;
+      matrix_buffer[3] = 0x81;
+      matrix_buffer[4] = 0xFF;
+      matrix_buffer[5] = 0x81;
+      matrix_buffer[6] = 0x81;
+      matrix_buffer[7] = 0x81;
+      updateLEDMatrix(index_led_matrix);
+      index_led_matrix++;
+      if (index_led_matrix >= MAX_LED_MATRIX)
+      {
+        index_led_matrix = 0;
+      }
+      set_timer3(timer3_value);
+    }
 
     /* USER CODE BEGIN 3 */
   }
@@ -251,17 +321,17 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -271,9 +341,8 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -286,10 +355,10 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief TIM2 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief TIM2 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_TIM2_Init(void)
 {
 
@@ -327,14 +396,13 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
-
 }
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -344,25 +412,16 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, ENM0_Pin|ENM1_Pin|DOT_Pin|RED_LED_Pin
-                          |EN0_Pin|EN1_Pin|EN2_Pin|EN3_Pin
-                          |ENM2_Pin|ENM3_Pin|ENM4_Pin|ENM5_Pin
-                          |ENM6_Pin|ENM7_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, ENM0_Pin | ENM1_Pin | DOT_Pin | RED_LED_Pin | EN0_Pin | EN1_Pin | EN2_Pin | EN3_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, A_Pin|B_Pin|C_Pin|ROW2_Pin
-                          |ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin
-                          |ROW7_Pin|D_Pin|E_Pin|F_Pin
-                          |G_Pin|ROW0_Pin|ROW1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, A_Pin | B_Pin | C_Pin | ROW2_Pin | ROW3_Pin | ROW4_Pin | ROW5_Pin | ROW6_Pin | ROW7_Pin | D_Pin | E_Pin | F_Pin | G_Pin | ROW0_Pin | ROW1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : ENM0_Pin ENM1_Pin DOT_Pin RED_LED_Pin
                            EN0_Pin EN1_Pin EN2_Pin EN3_Pin
                            ENM2_Pin ENM3_Pin ENM4_Pin ENM5_Pin
                            ENM6_Pin ENM7_Pin */
-  GPIO_InitStruct.Pin = ENM0_Pin|ENM1_Pin|DOT_Pin|RED_LED_Pin
-                          |EN0_Pin|EN1_Pin|EN2_Pin|EN3_Pin
-                          |ENM2_Pin|ENM3_Pin|ENM4_Pin|ENM5_Pin
-                          |ENM6_Pin|ENM7_Pin;
+  GPIO_InitStruct.Pin = ENM0_Pin | ENM1_Pin | DOT_Pin | RED_LED_Pin | EN0_Pin | EN1_Pin | EN2_Pin | EN3_Pin | ENM2_Pin | ENM3_Pin | ENM4_Pin | ENM5_Pin | ENM6_Pin | ENM7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -372,15 +431,11 @@ static void MX_GPIO_Init(void)
                            ROW3_Pin ROW4_Pin ROW5_Pin ROW6_Pin
                            ROW7_Pin D_Pin E_Pin F_Pin
                            G_Pin ROW0_Pin ROW1_Pin */
-  GPIO_InitStruct.Pin = A_Pin|B_Pin|C_Pin|ROW2_Pin
-                          |ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin
-                          |ROW7_Pin|D_Pin|E_Pin|F_Pin
-                          |G_Pin|ROW0_Pin|ROW1_Pin;
+  GPIO_InitStruct.Pin = A_Pin | B_Pin | C_Pin | ROW2_Pin | ROW3_Pin | ROW4_Pin | ROW5_Pin | ROW6_Pin | ROW7_Pin | D_Pin | E_Pin | F_Pin | G_Pin | ROW0_Pin | ROW1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -392,9 +447,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -407,14 +462,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
