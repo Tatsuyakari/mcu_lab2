@@ -146,7 +146,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int timer1_value = 50;
+  int timer1_value = 100;
   int timer2_value = 100;
   set_timer1(timer1_value);
   set_timer2(timer2_value);
