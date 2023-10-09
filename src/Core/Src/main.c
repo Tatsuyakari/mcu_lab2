@@ -267,6 +267,36 @@ int main(void)
       break;
     }
   }
+  // Write letter A to LED Matrix
+  uint8_t letterA[8] = {
+      0b00111100,
+      0b01100110,
+      0b11000011,
+      0b11000011,
+      0b11111111,
+      0b11000011,
+      0b11000011,
+      0b11000011};
+  void shiftleft(uint8_t * letter)
+  {
+    // Shift the letter to the left
+    // Row 1
+    letter[0] = (letter[0] << 1) | (letter[1] >> 7);
+    // Row 2
+    letter[1] = (letter[1] << 1) | (letter[2] >> 7);
+    // Row 3
+    letter[2] = (letter[2] << 1) | (letter[3] >> 7);
+    // Row 4
+    letter[3] = (letter[3] << 1) | (letter[4] >> 7);
+    // Row 5
+    letter[4] = (letter[4] << 1) | (letter[5] >> 7);
+    // Row 6
+    letter[5] = (letter[5] << 1) | (letter[6] >> 7);
+    // Row 7
+    letter[6] = (letter[6] << 1) | (letter[7] >> 7);
+    // Row 8
+    letter[7] <<= 1;
+  }
 
   while (1)
   {
@@ -297,20 +327,24 @@ int main(void)
     }
     if (timer3_flag == 1)
     {
-      // Write letter A to LED Matrix
-      matrix_buffer[0] = 0x3C;
-      matrix_buffer[1] = 0x42;
-      matrix_buffer[2] = 0x81;
-      matrix_buffer[3] = 0x81;
-      matrix_buffer[4] = 0xFF;
-      matrix_buffer[5] = 0x81;
-      matrix_buffer[6] = 0x81;
-      matrix_buffer[7] = 0x81;
+      // Update matrix_buffer with the full letter "A" pattern
+      matrix_buffer[0] = letterA[0];
+      matrix_buffer[1] = letterA[1];
+      matrix_buffer[2] = letterA[2];
+      matrix_buffer[3] = letterA[3];
+      matrix_buffer[4] = letterA[4];
+      matrix_buffer[5] = letterA[5];
+      matrix_buffer[6] = letterA[6];
+      matrix_buffer[7] = letterA[7];
+
+      // Update the LED matrix with the complete letter "A"
       updateLEDMatrix(index_led_matrix);
+
       index_led_matrix++;
       if (index_led_matrix >= MAX_LED_MATRIX)
       {
         index_led_matrix = 0;
+        shiftleft(letterA);
       }
       set_timer3(timer3_value);
     }
