@@ -146,54 +146,88 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int timer1_value = 100;
+  int timer1_value = 50;
   int timer2_value = 100;
   set_timer1(timer1_value);
   set_timer2(timer2_value);
-
-  int SEGMENT = 0;
   // set pin EN0 to 1 and EN3 to 1
   HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
   HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
   HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, 1);
   HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, 1);
+  // clock
+  int hour = 15, minute = 8, second = 50;
+  int SEGMENT = 0;
+  void updateClockBuffer()
+  {
+    led_buffer[0] = hour / 10;
+    led_buffer[1] = hour % 10;
+    led_buffer[2] = minute / 10;
+    led_buffer[3] = minute % 10;
+    if (timer1_flag == 1 && SEGMENT == 0)
+    {
+      SEGMENT = 1;
+      set_timer1(timer1_value);
+      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 0);
+      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
+      HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, 1);
+      HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, 1);
+      update7SEG(0);
+    }
+    else if (timer1_flag == 1 && SEGMENT == 1)
+    {
+      SEGMENT = 2;
+      set_timer1(timer1_value);
+      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
+      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 0);
+      HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, 1);
+      HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, 1);
+      update7SEG(1);
+    }
+    else if (timer1_flag == 1 && SEGMENT == 2)
+    {
+      SEGMENT = 3;
+      set_timer1(timer1_value);
+      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
+      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
+      HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, 0);
+      HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, 1);
+      update7SEG(2);
+    }
+    else if (timer1_flag == 1 && SEGMENT == 3)
+    {
+      SEGMENT = 0;
+      set_timer1(timer1_value);
+      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
+      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
+      HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, 1);
+      HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, 0);
+      update7SEG(3);
+    }
+    
+  }
 
   while (1)
   {
     /* USER CODE END WHILE */
     // display 1 on 7-segment en0 then after 500s display 2 on 7-segment en1
-    if (timer1_flag == 1 && SEGMENT == 0)
+    second++;
+    if (second >= 60)
     {
-      SEGMENT = 1;
-      HAL_GPIO_WritePin(EN0_GPIO_Port, EN3_Pin, 1);
-      HAL_GPIO_WritePin(EN1_GPIO_Port, EN0_Pin, 0);
-      update7SEG(0);
-      set_timer1(timer1_value);
+      second = 0;
+      minute++;
     }
-    else if (timer1_flag == 1 && SEGMENT == 1)
+    if (minute >= 60)
     {
-      SEGMENT = 2;
-      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
-      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 0);
-      update7SEG(1);
-      set_timer1(timer1_value);
+      minute = 0;
+      hour++;
     }
-    else if (timer1_flag == 1 && SEGMENT == 2)
+    if (hour >= 24)
     {
-      SEGMENT = 3;
-      HAL_GPIO_WritePin(EN0_GPIO_Port, EN1_Pin, 1);
-      HAL_GPIO_WritePin(EN1_GPIO_Port, EN2_Pin, 0);
-      update7SEG(2);
-      set_timer1(timer1_value);
+      hour = 0;
     }
-    else if (timer1_flag == 1 && SEGMENT == 3)
-    {
-      SEGMENT = 0;
-      HAL_GPIO_WritePin(EN0_GPIO_Port, EN2_Pin, 1);
-      HAL_GPIO_WritePin(EN1_GPIO_Port, EN3_Pin, 0);
-      update7SEG(3);
-      set_timer1(timer1_value);
-    }
+    updateClockBuffer();
+    HAL_Delay(1000);
     if (timer2_flag == 1)
     {
       // togle Dot
