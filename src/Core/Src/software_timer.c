@@ -9,7 +9,7 @@
 int timer1_counter = 0;
 int timer1_flag = 0; // Define timer1_flag as a global variable
 
-void setTimer1(int duration)
+void set_timer1(int duration)
 {
     timer1_counter = duration;
     timer1_flag = 0;
