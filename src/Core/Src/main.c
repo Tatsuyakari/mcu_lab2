@@ -96,9 +96,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  setTimer1(100);
   while (1)
   {
     /* USER CODE END WHILE */
+    if (timer1_flag == 1)
+    {
+      HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+      setTimer1(100);
+    }
 
     /* USER CODE BEGIN 3 */
   }
@@ -223,14 +229,9 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  set_timer1(100);
+
   while (1)
   {
-    if (timer1_flag)
-    {
-      HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-      set_timer1(100);
-    }
   }
   /* USER CODE END Error_Handler_Debug */
 }
