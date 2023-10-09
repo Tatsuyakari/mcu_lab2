@@ -10,6 +10,7 @@
 extern int timer1_flag;
 
 void set_timer1(int duration);
+void set_timer2(int duration);
 void timerRun();
 
 #endif /* INC_SOFWARE_TIMER_H_ */
