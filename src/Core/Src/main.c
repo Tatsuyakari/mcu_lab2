@@ -148,7 +148,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   int timer1_value = 50;
   int timer2_value = 100;
-  int timer3_value = 50;
+  int timer3_value = 25;
   set_timer1(timer1_value);
   set_timer2(timer2_value);
   set_timer3(timer3_value);
@@ -318,7 +318,6 @@ int main(void)
       hour = 0;
     }
     updateClockBuffer();
-    HAL_Delay(1000);
     if (timer2_flag == 1)
     {
       // togle Dot
