@@ -118,7 +118,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  set_timer1(200);
+  set_timer1(50);
   int SEGMENT = 0;
 
   while (1)
@@ -131,7 +131,7 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 1);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 0);
       display7Segment(segmentNumber[1]);
-      set_timer1(100);
+      set_timer1(50);
     }
     else if (timer1_flag == 1 && SEGMENT == 1)
     {
@@ -139,7 +139,7 @@ int main(void)
       HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, 0);
       HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, 1);
       display7Segment(segmentNumber[2]);
-      set_timer1(100);
+      set_timer1(50);
     }
 
     /* USER CODE BEGIN 3 */

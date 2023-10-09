@@ -205,8 +205,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  set_timer1(200);
- 8000214:	20c8      	movs	r0, #200	; 0xc8
+  set_timer1(50);
+ 8000214:	2032      	movs	r0, #50	; 0x32
  8000216:	f000 f92d 	bl	8000474 <set_timer1>
   int SEGMENT = 0;
  800021a:	2300      	movs	r3, #0
@@ -243,8 +243,8 @@ int main(void)
  8000246:	785b      	ldrb	r3, [r3, #1]
  8000248:	4618      	mov	r0, r3
  800024a:	f7ff ff7f 	bl	800014c <display7Segment>
-      set_timer1(100);
- 800024e:	2064      	movs	r0, #100	; 0x64
+      set_timer1(50);
+ 800024e:	2032      	movs	r0, #50	; 0x32
  8000250:	f000 f910 	bl	8000474 <set_timer1>
  8000254:	e01a      	b.n	800028c <main+0x94>
     }
@@ -275,8 +275,8 @@ int main(void)
  800027e:	789b      	ldrb	r3, [r3, #2]
  8000280:	4618      	mov	r0, r3
  8000282:	f7ff ff63 	bl	800014c <display7Segment>
-      set_timer1(100);
- 8000286:	2064      	movs	r0, #100	; 0x64
+      set_timer1(50);
+ 8000286:	2032      	movs	r0, #50	; 0x32
  8000288:	f000 f8f4 	bl	8000474 <set_timer1>
     if (timer1_flag == 1 && SEGMENT == 0)
  800028c:	e7c7      	b.n	800021e <main+0x26>
