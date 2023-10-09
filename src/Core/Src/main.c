@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "sofware_timer.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -206,21 +207,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int counter = 100;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if (htim->Instance == TIM2)
-  {
-    if (counter > 0)
-    {
-      counter--;
-    }
-    else
-    {
-      HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-      counter = 100;
-    }
-  }
+  timerRun();
 }
 
 /* USER CODE END 4 */
@@ -234,8 +223,14 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  set_timer1(100);
   while (1)
   {
+    if (timer1_flag)
+    {
+      HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+      set_timer1(100);
+    }
   }
   /* USER CODE END Error_Handler_Debug */
 }
